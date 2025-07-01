@@ -1,0 +1,33 @@
+/* Custom font for Inter (optional, Bootstrap uses system fonts) */
+body {
+    font-family: 'Inter', sans-serif;
+    /* Using a linear gradient background for consistency with previous design */
+    background: linear-gradient(to bottom right, #6a82fb, #fc5c7d); /* Example gradient */
+}
+
+/* Hide scrollbar for a cleaner look */
+body::-webkit-scrollbar {
+    display: none;
+}
+body {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+/* Optional: Add some subtle shadow to the card for better elevation */
+.card {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    border-radius: 1rem; /* More rounded corners */
+}
+
+/* Custom style for the weather card, moved from inline HTML style */
+.weather-card {
+    max-width: 500px;
+    width: 100%;
+}
+
+/* Weather icon, offered by OpenWeatherMap. Not used in this application
+/* .weather-icon-container {
+/*    text-align: center; /* Centers inline content (icon image) within the paragraph
+/*    margin-bottom: 10px; /* Add some space below the icon 
+/* } */
