@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Forecast (Bootstrap)</title>
+    <!-- Bootstrap CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Link to external custom CSS file -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<!--d-flex: makes the body element a flex container. This enables Flexbox layout for its direct child elements, allowing us to easily align and distribute them.
+align-items-center: used in conjunction with d-flex, vertically centers the content within the body. It aligns the flex items along the cross-axis (which is vertical by default for a row-based flex container).
+justify-content-center: used with d-flex, horizontally centers the content within the body. It aligns the flex items along the main-axis (horizontal by default for a row-based flex container).
+min-vh-100: sets the minimum height of the body to 100% of the viewport height. This ensures that your content is always centered within the visible browser window, even if the content itself isn't tall enough to fill the screen.
+bg-light: Bootstrap utility class that applies a light background color to the body element. Bootstrap defines a set of theme colors, and light is typically a soft grey or off-white.-->
+<body class="d-flex align-items-center justify-content-center min-vh-100 bg-light">
+    <!--card: a fundamental Bootstrap component class. It creates a flexible and extensible content container. A card typically has:
+        -  A default background color (often white or light).
+        -  Some default padding.
+        -  Rounded corners.
+        It's designed to hold various types of content (text, images, lists, buttons, etc.) in a structured way.
+    shadow-lg: a Bootstrap utility class that applies a large shadow to the element. Bootstrap provides several shadow sizes (shadow-sm, shadow, shadow-lg) to give elements a sense of depth and separation from the background. shadow-lg creates a more pronounced, noticeable shadow.
+    p-4: This is a Bootstrap spacing utility class for padding. It applies padding to all four sides, equivalent 16px).
+    weather-card: A custom CSS class defined in style.css. Used to apply specific styling that isn't part of Bootstrap's standard utility classes.-->
+    <div class="card shadow-lg p-4 weather-card">
+        <!--card-title: a Bootstrap class specifically designed to be used within a .card component. It applies styling to make the h1 element look like a title within the card. 
+        text-center: a Bootstrap text alignment utility class. It horizontally centers the text content within the <h1> element. Whatever text is inside this <h1> will be aligned to the center of its parent container.
+        mb-4:  a Bootstrap spacing utility class for margin-bottom. m stands for margin. b stands for bottom. mb-4 places a 24px bottom margin.-->
+        <h1 class="card-title text-center mb-4">
+            <!-- Weather icon - using a simple Bootstrap-compatible emoji or similar -->
+            <!-- <span class="text-info me-2">&#x2600;&#xFE0F;</span> Weather Forecast  Sun emoji -->
+             <span class="text-info me-2">&#x1F326;&#xFE0F;</span> Weather Forecast  <!--Sun/Cloud emoji 26C5 or 1F324 and rain 1F326 -->
+        </h1> <!--text-info: a Bootstrap text color utility class. 'info' is typically a light blue or cyan color.  me-2: Spacing utility class margin-end-2 (= margin-right 8px).-->
+
+        <div class="mb-3">   <!--form-label & form-control: Bootstrap classes offering consistent styling for form components-->
+            <label for="cityInput" class="form-label">Location (City, Town or Post Code):</label>
+            <input type="text" id="cityInput" class="form-control" placeholder="e.g., London, Paris, New York"> <!--Removed value="53.6409". Now inserted from .js file-->
+        </div>
+        <!--btn: base Bootstrap class that styles the element as a button. It applies default button padding, text alignment, and removes default browser button styles.
+            btn-primary: applies Bootstrap's "primary" theme color to the button. By default, this is typically a blue color, making it visually stand out as a primary action.
+            w-100: Bootstrap width utility class. It sets the width of the button to 100% of its parent container.
+            mb-3: Bootstrap margin-bottom utility class. Applies 16px bottom margin.-->
+        <button id="fetchWeatherBtn" class="btn btn-primary w-100 mb-3">Get Weather</button>
+
+        <!-- Loading Indicator -->  <!--my-3: Boot spacing utility class that adds vertical (y-axis) margin of 16px (both margin-top and margin-bottom). d-none: the loading indicator is initially hidden when the page loads.-->
+        <div id="loadingIndicator" class="text-center my-3 d-none">
+            <!--spinner-border: Boot component class that creates a circular loading spinner. It's an animated border that visually indicates something is loading.
+                text-primary: Applies Bootstrap's "primary" theme color (typically blue) to the spinner, matching your button's color.
+                role="status": This is an ARIA (Accessible Rich Internet Applications) attribute that provides semantic meaning for assistive technologies like screen readers. It informs users that this element conveys live, non-interactive information about a process that has changed.-->
+            <div class="spinner-border text-primary" role="status">
+                <!--visually-hidden: Boot utility class that hides content visually while still making it available to assistive technologies. This ensures that users who rely on screen readers are informed that "Loading..." is in progress, even though they can't see the spinner directly.-->
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-primary">Fetching weather data...</p>
+        </div>
+
+        <!-- Error Message Display -->
+         <!--class="alert": Core Boot component class that styles the div as an "alert box."  "alert-danger": Boot contextual class applies styling specifically for "danger" or error messages. d-none: Initialy hidden.-->
+        <div id="errorMessage" class="alert alert-danger d-none" role="alert">  <!--role="alert": ARIA (Accessible Rich Internet Applications) attribute. It provides semantic meaning for assistive technologies (like screen readers), informing them that this element is a live region that contains important and time-sensitive information, which should be announced to the user immediately without requiring focus.-->
+            <strong class="d-block">Error!</strong>  <!--"d-block":  Boot utility class that forces the <strong> element to behave like a block-level element, causing "Error!"-->
+            <span id="errorText"></span>
+        </div>
+
+        <!-- Weather Display Area (initialy hidden)-->
+             <!--card-body": Used inside .card to provide standard padding and structure for the card's main content area, ensuring a consistent internal layout
+             "bg-light": Sets the background color of this display area to Bootstrap's light gray, providing a clean appearance.
+              "mt-4": margin-tp 24px.  "d-none": display hiden.-->
+        <div id="weatherDisplay" class="card card-body bg-light mt-4 d-none">
+            <!--"card-subtitle": Boot class that styles the h2 specifically as a subtitle within a card. "text-muted": text color to Boot's "muted" color, which is a lighter shade of gray, making it appear less prominent.-->
+            <h2 class="card-subtitle mb-3 text-center text-muted">Current Weather</h2>
+            <div id="weatherContent" class="text-secondary">  <!--"text-secondary": Sets text to Boot's "secondary" color, typically a mid-range gray, for general content.-->
+                <!-- Weather details will be injected here by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper (for Bootstrap JavaScript features if needed) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Link to external custom JavaScript file -->
+    <script src="script.js"></script>
+</body>
+</html>
