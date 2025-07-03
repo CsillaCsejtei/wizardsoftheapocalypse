@@ -1,4 +1,6 @@
-const cityInput = document.getElementById("cityInput"); 
+
+const cityInput = document.getElementById("cityInput"); // This is the input for city name
+
 const fetchWeatherBtn = document.getElementById("fetchWeatherBtn");
 const loadingIndicator = document.getElementById("loadingIndicator");
 const errorMessage = document.getElementById("errorMessage");
@@ -175,6 +177,7 @@ async function fetchWeatherData(latitude, longitude, cityName, country) {
                 <p><strong>Temperature:</strong> ${temperature} &deg;C</p>
                 <p><strong>Weather:</strong> ${weatherDescription} </p>
             `;
+
             weatherDisplay.classList.remove('d-none');     
     } else {
       showError(
@@ -185,3 +188,4 @@ async function fetchWeatherData(latitude, longitude, cityName, country) {
     showError(`Failed to fetch weather data: ${error.message}`);
   }
 }
+
