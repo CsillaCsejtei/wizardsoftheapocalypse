@@ -1,4 +1,4 @@
-const cityInput = document.getElementById("cityInput"); // This is the input for city name
+const cityInput = document.getElementById("cityInput"); 
 const fetchWeatherBtn = document.getElementById("fetchWeatherBtn");
 const loadingIndicator = document.getElementById("loadingIndicator");
 const errorMessage = document.getElementById("errorMessage");
@@ -33,12 +33,6 @@ cityInput.addEventListener("keydown", function (event) {
   }
 });
 
-/**
- * Attempts to fetch geographical coordinates (latitude, longitude) for a given location input.
- * It first tries to find it as a city name, then falls back to a postcode/ZIP code.
- * @param {string} locationInput - The user's input (e.g., "London", "E14", "90210").
- * @returns {Promise<{lat: number, lon: number, name: string, country: string}|null>} An object with coordinates, name, and country if found, otherwise null.
- */
 async function fetchLocationCoordinates(locationInput) {
 
   try {
@@ -77,8 +71,8 @@ async function fetchLocationCoordinates(locationInput) {
       return {
         lat: data.lat,
         lon: data.lon,
-        name: data.name || locationInput, // OWM ZIP API provides 'name' which is often the city
-        country: data.country || countryCode, // Fallback to provided countryCode if OWM doesn't return
+        name: data.name || locationInput, 
+        country: data.country || countryCode, 
       };
     }
   } catch (error) {
@@ -181,10 +175,7 @@ async function fetchWeatherData(latitude, longitude, cityName, country) {
                 <p><strong>Temperature:</strong> ${temperature} &deg;C</p>
                 <p><strong>Weather:</strong> ${weatherDescription} </p>
             `;
-            weatherDisplay.classList.remove('d-none'); // Show weather display
-
-
-      
+            weatherDisplay.classList.remove('d-none');     
     } else {
       showError(
         "No current weather data available for the specified location."
