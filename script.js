@@ -168,67 +168,110 @@ async function fetchWeatherData(latitude, longitude, cityName, country) {
       const cloudCover = data.clouds ? data.clouds.all : "N/A"; // Corrected: This value IS available
       const iconCode = data.weather[0].icon; // Corrected: This value IS available
       const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`; // Icon URL
+      
+         // Time and location details
+            const dt = data.dt; // Unix UTC timestamp, in seconds.
+            const timezoneOffset = data.timezone; // Shift in seconds from UTC
 
-      const precipitationProbability =
-        "Not available from current weather endpoint"; // Still not from current weather
+            // Create a Date object from the UTC timestamp
+            const utcDate = new Date(dt * 1000); // dt is in seconds, Date constructor expects milliseconds
 
-      // Time and location details
-      const dt = data.dt; // Unix UTC timestamp
-      const timezoneOffset = data.timezone; // Shift in seconds from UTC
+            // Apply the timezone offset to get the local time at the queried location
+            // We get the UTC milliseconds and add the offset in milliseconds
+            const localDateAtLocation = new Date(utcDate.getTime() + (timezoneOffset * 1000));
+            
+            // Calculate local time
+            const localTimestamp = (dt + timezoneOffset) * 1000; // Convert to milliseconds
+            const localDate = new Date(localTimestamp);
+            const localDateInTargetZone = new Date((dt + timezoneOffset) * 1000);
 
-      // Calculate local time
-      const localTimestamp = (dt + timezoneOffset) * 1000; // Convert to milliseconds
-      const localDate = new Date(localTimestamp);
+            // const time = localDate.toLocaleString('en-GB', {
+            //     hour: '2-digit',
+            //     minute: '2-digit',
+            //     day: 'numeric',
+            //     month: 'short',
+            //     year: 'numeric'
 
-      const dayName = localDate.toLocaleString("en-GB", {
-        weekday: "long",
-      });
-      const dayMonth = localDate.toLocaleDateString("en-GB", {
-        day: "2-digit",
-        month: "2-digit",
-      });
+            const time = localDateInTargetZone.toLocaleString('en-GB', {
+                hour: '2-digit',
+                minute: '2-digit',
+                day: 'numeric',
+                month: 'short',
+                year: 'numeric',
+                timeZone: 'UTC'
+            });
 
-      const time = localDate.toLocaleString("en-GB", {
-        hour: "2-digit",
-        minute: "2-digit",
-        day: "numeric",
-        month: "short",
-        year: "numeric",
-      });
-
-      //     // Display weather content including the icon and passed lat/lon
-      //     weatherContent.innerHTML = `
-      //         <p class="weather-icon-container"><img src="${iconUrl}" alt="${weatherDescription} icon"></p>
-      //         <p><strong>Location:</strong> ${cityName}, ${country} (<span title="Latitude">${latitude.toFixed(4)}</span>&deg;, <span title="Longitude">${longitude.toFixed(4)}</span>&deg;)</p>
-      //         <p><strong>Time (Local):</strong> ${time}</p>
-      //         <p><strong>Temperature:</strong> ${temperature} &deg;C</p>
-      //         <p><strong>Relative Humidity:</strong> ${humidity} %</p>
-      //         <p><strong>Weather:</strong> ${weatherDescription} </p>
-      //         <p><strong>Cloud Cover:</strong> ${cloudCover} %</p>
-      //         <p><strong>Precipitation Probability:</strong> ${precipitationProbability}</p>
-      //     `;
-      //     weatherDisplay.classList.remove('d-none'); // Show weather display
-      // } else {
-      //     showError("No current weather data available for the specified location.");
-      // }
-
-      // Display weather content including the icon and passed lat/lon
-      weatherContent.innerHTML = `
-                <div style="display: flex; align-items: center; gap: 10px;"><img src="${iconUrl}" alt="${weatherDescription} icon">
-                <div>  <span class="mb-0"><strong>${dayName}</strong></span>
-                       <span class="mb=0" text-muted>${dayMonth}</span>
-                </div>
-                </div>
-    
-                <p><strong>Location:</strong> ${cityName}, ${country} (<span title="Latitude">${latitude.toFixed(
-        4
-      )}</span>&deg;, <span title="Longitude">${longitude.toFixed(
-        4
-      )}</span>&deg;)</p>
+            weatherContent.innerHTML = `
+                <p class="weather-icon-container"><img src="${iconUrl}" alt="${weatherDescription} icon"></p>
+                <p><strong>Location:</strong> ${cityName}, ${country} (<span title="Latitude">${latitude.toFixed(4)}</span>&deg;, <span title="Longitude">${longitude.toFixed(4)}</span>&deg;)</p>
+                <p><strong>Time (Local):</strong> ${time}</p>
                 <p><strong>Temperature:</strong> ${temperature} &deg;C</p>
                 <p><strong>Weather:</strong> ${weatherDescription} </p>
             `;
-      weatherDisplay.classList.remove("d-none"); // Show weather display
+            weatherDisplay.classList.remove('d-none'); // Show weather display
+
+
+      // const precipitationProbability =
+      //   "Not available from current weather endpoint"; // Still not from current weather
+
+      // // Time and location details
+      // const dt = data.dt; // Unix UTC timestamp
+      // const timezoneOffset = data.timezone; // Shift in seconds from UTC
+
+      // // Calculate local time
+      // const localTimestamp = (dt + timezoneOffset) * 1000; // Convert to milliseconds
+      // const localDate = new Date(localTimestamp);
+
+      // const dayName = localDate.toLocaleString("en-GB", {
+      //   weekday: "long",
+      // });
+      // const dayMonth = localDate.toLocaleDateString("en-GB", {
+      //   day: "2-digit",
+      //   month: "2-digit",
+      // });
+
+      // const localTime = localDate.toLocaleString("en-GB", {
+      //   hour: "2-digit",
+      //   minute: "2-digit",
+      //   day: "numeric",
+      //   month: "short",
+      //   year: "numeric",
+      // });
+
+      // //     // Display weather content including the icon and passed lat/lon
+      // //     weatherContent.innerHTML = `
+      // //         <p class="weather-icon-container"><img src="${iconUrl}" alt="${weatherDescription} icon"></p>
+      // //         <p><strong>Location:</strong> ${cityName}, ${country} (<span title="Latitude">${latitude.toFixed(4)}</span>&deg;, <span title="Longitude">${longitude.toFixed(4)}</span>&deg;)</p>
+      // //         <p><strong>Time (Local):</strong> ${time}</p>
+      // //         <p><strong>Temperature:</strong> ${temperature} &deg;C</p>
+      // //         <p><strong>Relative Humidity:</strong> ${humidity} %</p>
+      // //         <p><strong>Weather:</strong> ${weatherDescription} </p>
+      // //         <p><strong>Cloud Cover:</strong> ${cloudCover} %</p>
+      // //         <p><strong>Precipitation Probability:</strong> ${precipitationProbability}</p>
+      // //     `;
+      // //     weatherDisplay.classList.remove('d-none'); // Show weather display
+      // // } else {
+      // //     showError("No current weather data available for the specified location.");
+      // // }
+      //       // <span class="mb=0" text-muted>${dayMonth}</span>
+      // // Display weather content including the icon and passed lat/lon
+      // weatherContent.innerHTML = `
+      //           <div style="display: flex; align-items: center; gap: 10px;"><img src="${iconUrl}" alt="${weatherDescription} icon">
+      //           <div>  <span class="mb-0"><strong>${dayName}</strong></span>
+                       
+      //                  <span class="mb=0" text-muted>${localTime}</span>
+      //           </div>
+      //           </div>
+    
+      //           <p><strong>Location:</strong> ${cityName}, ${country} (<span title="Latitude">${latitude.toFixed(
+      //   4
+      // )}</span>&deg;, <span title="Longitude">${longitude.toFixed(
+      //   4
+      // )}</span>&deg;)</p>
+      //           <p><strong>Temperature:</strong> ${temperature} &deg;C</p>
+      //           <p><strong>Weather:</strong> ${weatherDescription} </p>
+      //       `;
+      // weatherDisplay.classList.remove("d-none"); // Show weather display
     } else {
       showError(
         "No current weather data available for the specified location."
