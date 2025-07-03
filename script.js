@@ -1,4 +1,3 @@
-// Get references to HTML elements
 const cityInput = document.getElementById("cityInput"); // This is the input for city name
 const fetchWeatherBtn = document.getElementById("fetchWeatherBtn");
 const loadingIndicator = document.getElementById("loadingIndicator");
@@ -7,29 +6,26 @@ const errorText = document.getElementById("errorText");
 const weatherDisplay = document.getElementById("weatherDisplay");
 const weatherContent = document.getElementById("weatherContent");
 
-// Open Weather Map API Key
-const API_KEY = "f23ee9deb4e1a7450f3157c44ed020e1"; // Your API Key
+const API_KEY = "f23ee9deb4e1a7450f3157c44ed020e1"; 
 
-// --- New API URLs for Geocoding ---
 const GEO_DIRECT_API_URL = "https://api.openweathermap.org/geo/1.0/direct";
 const GEO_ZIP_API_URL = "https://api.openweathermap.org/geo/1.0/zip";
 
-// Function to display an error message
+
 function showError(message) {
   errorText.textContent = message;
-  errorMessage.classList.remove("d-none"); // Bootstrap class to show
-  weatherDisplay.classList.add("d-none"); // Hide weather display on error
+  errorMessage.classList.remove("d-none"); 
+  weatherDisplay.classList.add("d-none"); 
 }
 
-// Function to hide error message
 function hideError() {
-  errorMessage.classList.add("d-none"); // Bootstrap class to hide
+  errorMessage.classList.add("d-none"); 
 }
 
-// Event listener for the "Get Weather" button
+
 fetchWeatherBtn.addEventListener("click", handleWeatherRequest);
 
-// Event listener for the "Enter" key on the city input field
+
 cityInput.addEventListener("keydown", function (event) {
   if (event.key === "Enter") {
     event.preventDefault();
@@ -44,7 +40,7 @@ cityInput.addEventListener("keydown", function (event) {
  * @returns {Promise<{lat: number, lon: number, name: string, country: string}|null>} An object with coordinates, name, and country if found, otherwise null.
  */
 async function fetchLocationCoordinates(locationInput) {
-  // --- Attempt 1: Search by City Name (Direct Geocoding) ---
+
   try {
     const cityQueryUrl = `${GEO_DIRECT_API_URL}?q=${encodeURIComponent(
       locationInput
@@ -63,14 +59,11 @@ async function fetchLocationCoordinates(locationInput) {
     }
   } catch (error) {
     console.error("Error during city name lookup:", error);
-    // Do not throw, allow fallback to postcode
+  
   }
 
-  // --- Attempt 2: If city name failed, search by Postcode/ZIP Code ---
-  // IMPORTANT: You need to specify a country code for ZIP/postcode lookups.
-  // For the UK, use 'GB'. For US ZIP codes, use 'US'.
-  // If your app is global, consider letting the user select the country or trying common ones.
-  const countryCode = "GB"; // Defaulting to UK for this example. Adjust as needed.
+  
+  const countryCode = "GB";
 
   try {
     const zipQueryUrl = `${GEO_ZIP_API_URL}?zip=${encodeURIComponent(
@@ -92,17 +85,16 @@ async function fetchLocationCoordinates(locationInput) {
     console.error("Error during postcode lookup:", error);
   }
 
-  return null; // Location not found by either method
+  return null; 
 }
 
-// Function to handle the full weather request (geocode then weather)
 async function handleWeatherRequest() {
   hideError();
   weatherDisplay.classList.add("d-none");
   loadingIndicator.classList.remove("d-none");
   fetchWeatherBtn.disabled = true;
 
-  const inputLocation = cityInput.value.trim(); // Changed 'city' to 'inputLocation' for clarity
+  const inputLocation = cityInput.value.trim(); 
 
   if (!inputLocation) {
     showError("Please enter a city name or postcode.");
@@ -112,11 +104,11 @@ async function handleWeatherRequest() {
   }
 
   try {
-    // Step 1: Get Latitude and Longitude using the new combined function
+
     const locationInfo = await fetchLocationCoordinates(inputLocation);
 
     if (!locationInfo) {
-      // No location found by either city or postcode
+     
       showError(
         `Location "${inputLocation}" not found. Please check spelling or try a different city/postcode (e.g., "London", "E14").`
       );
@@ -125,13 +117,12 @@ async function handleWeatherRequest() {
       return;
     }
 
-    // Extract information from the found location
     const latitude = locationInfo.lat;
     const longitude = locationInfo.lon;
     const cityName = locationInfo.name;
     const country = locationInfo.country;
 
-    // Step 2: Fetch Weather Data using the obtained Latitude and Longitude
+
     await fetchWeatherData(latitude, longitude, cityName, country);
   } catch (error) {
     showError(`An unexpected error occurred: ${error.message}`);
@@ -141,7 +132,6 @@ async function handleWeatherRequest() {
   }
 }
 
-// Function to fetch weather data from OpenWeatherMap API (Current Weather Data)
 async function fetchWeatherData(latitude, longitude, cityName, country) {
   const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&units=metric`;
 
@@ -159,34 +149,22 @@ async function fetchWeatherData(latitude, longitude, cityName, country) {
 
     const data = await response.json();
 
-    weatherContent.innerHTML = ""; // Clear previous weather content
+    weatherContent.innerHTML = ""; 
 
     if (data && data.main && data.weather) {
       const temperature = data.main.temp;
-      const humidity = data.main.humidity; // Corrected: This value IS available
+      const humidity = data.main.humidity; 
       const weatherDescription = data.weather[0].description;
-      const cloudCover = data.clouds ? data.clouds.all : "N/A"; // Corrected: This value IS available
-      const iconCode = data.weather[0].icon; // Corrected: This value IS available
-      const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`; // Icon URL
-      
-         // Time and location details
-            const dt = data.dt; // Unix UTC timestamp, in seconds.
-            const timezoneOffset = data.timezone; // Shift in seconds from UTC
-
-            // Create a Date object from the UTC timestamp
-            const utcDate = new Date(dt * 1000); // dt is in seconds, Date constructor expects milliseconds
-
-            // Apply the timezone offset to get the local time at the queried location
-            // We get the UTC milliseconds and add the offset in milliseconds
+      const cloudCover = data.clouds ? data.clouds.all : "N/A"; 
+      const iconCode = data.weather[0].icon; 
+      const iconUrl = `https://openweathermap.org/img/wn/${iconCode}@2x.png`; 
+            const dt = data.dt; 
+            const timezoneOffset = data.timezone; 
+            const utcDate = new Date(dt * 1000); 
             const localDateAtLocation = new Date(utcDate.getTime() + (timezoneOffset * 1000));
-            
-            // Calculate local time
             const localTimestamp = (dt + timezoneOffset) * 1000; // Convert to milliseconds
             const localDate = new Date(localTimestamp);
             const localDateInTargetZone = new Date((dt + timezoneOffset) * 1000);
-
-            
-
             const time = localDateInTargetZone.toLocaleString('en-GB', {
                 hour: '2-digit',
                 minute: '2-digit',
@@ -216,6 +194,3 @@ async function fetchWeatherData(latitude, longitude, cityName, country) {
     showError(`Failed to fetch weather data: ${error.message}`);
   }
 }
-
-// Remove the initial call on page load if you want the field to be empty
-// window.onload = handleWeatherRequest; // Keep this commented out unless you want to load weather on page load
